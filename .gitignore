@@ -1,0 +1,10 @@
+# R Stuff
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Other Stuff
+.DS_Store
+*.bib
