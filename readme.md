@@ -16,6 +16,14 @@ citeR <- function(input, output, exclude)
 ```
 
 
+# Code to install packages to your system
+install_package_if_missing <- function(pkg) {
+  if (! pkg %in% installed.packages()[, "Package"]) install.packages(pkg)
+}
+install_package_if_missing("tidyverse")
+install_package_if_missing("purr")
+
+
 # How to install a package/R-file from GitHub
 
 

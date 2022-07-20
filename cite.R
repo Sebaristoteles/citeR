@@ -149,7 +149,7 @@ citeR <- function(input,
     paste0(., collapse = "\n") %>%
     gsub("\n\\s+\n", "\n", .)
   
-  write_file(citation_file, path = output)
+  write_file(citation_file, file = output)
   
   
 }
