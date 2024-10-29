@@ -135,7 +135,7 @@ citeR <- function(input,
   # Apply the function across all text sets with a progress bar
   message(format(Sys.time(), "%d.%m.%Y %X"), 
           ": finding matches of potential packages and existing matches")
-  results_list <- pblapply(pot_packs[1:2], f_find_exact_matches)
+  results_list <- pblapply(pot_packs, f_find_exact_matches)
   
   packages_found <-
     results_list %>%
