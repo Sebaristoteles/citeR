@@ -196,7 +196,7 @@ citeR <- function(input,
   citation_citeR <- list()
   citation_citeR <-
     citation_R[[1]] %>%
-    gsub("\\{R,", "{R:citeR", .) %>%
+    gsub("\\{R,", "{R:citeR,", .) %>%
     gsub("title = \\{.+?\\}", 
          "title = {citeR: An easy citation tool to account for all your used packages}", .) %>%
     gsub("author = \\{.+?\\}", "author = {Sebastian Geschonke", .) %>%
