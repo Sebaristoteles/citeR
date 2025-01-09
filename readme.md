@@ -1,14 +1,14 @@
 # citeR
 
 This R-function creates a .bib-file that includes the citations from all the packages that you have used in a project.
-The input can be a file or folder. The function will use all R-files and Rmd-files and extract the
+The input can be a file or folder. The function will use all R-files and Rmd-files and extract the used packages
 
 You __must__ specify
 - the _input_
 
 You __can__ specify
 - the _output_ file location and name
-- a vector of packagaes to _exclude_
+- a vector of packages to _exclude_
 
 
 ```R
@@ -16,7 +16,44 @@ citeR <- function(input, output, exclude)
 ```
 
 
-# Code to install packages to your system
+# Purpose
+
+citeR is an easy way to get a bib-file with all the references of the R-packages that you used.
+It is good scientific practice to cite as well tools that your analysis relies on.
+
+
+# How to use the software-bib
+
+If you have the bib-file, you can easily integrate the references by either citing them in Latex using the common citation approach 
+or use nocite if you do not want to write them explicitly but want to list them.
+
+```Latex
+\nocite{<bib-key>}
+
+# for all entries:
+\nocite{*}
+```
+
+
+
+An efficient alternative in Rmarkdown is using nocites for all entries of the bib file and thereby creating the list of Software references
+
+```R
+
+```{r nocite-software,  echo=FALSE, results='asis'}
+nocites <- read_lines(here("doc", "bib", "software.bib")) %>%
+  .[grepl("@.+?\\{R(|:).*?,", .)] %>%
+  gsub("@.+?\\{", "", .) %>%
+  gsub(",$", "", .) %>%
+  paste0("\\nocite{", ., "}")
+
+cat(paste0(nocites, collapse = "\n"))
+```
+
+```
+
+
+# Code to install required packages to your system
 
 ```R
 install_package_if_missing <- function(pkg) {
@@ -24,6 +61,9 @@ install_package_if_missing <- function(pkg) {
 }
 install_package_if_missing("tidyverse")
 install_package_if_missing("purr")
+install_package_if_missing("magrittr")
+install_package_if_missing("pbapply")
+install_package_if_missing("here")
 ```
 
 
