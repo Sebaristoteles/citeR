@@ -50,7 +50,6 @@ nocites <- read_lines(here("doc", "bib", "software.bib")) %>%
 cat(paste0(nocites, collapse = "\n"))
 ```
 
-```
 
 
 # Code to install required packages to your system
