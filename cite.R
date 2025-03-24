@@ -26,8 +26,11 @@ invisible(
 
 citeR <- function(input, 
                   output = here("software.bib"), # change the location and file name
-                  exclude = NULL, # vector of packages to be excluded
-                  dependencies = F){
+                  include_dependencies = F,
+                  recursive_dependencies = F,
+                  include_latex = F,
+                  exclude = NULL # vector of packages to be excluded
+                  ){
   
   # ---------- 1) identify if file or folder and R-files ----------------------
   
@@ -176,7 +179,44 @@ citeR <- function(input,
   
   
   
-  # ---------- 4) get citation infos ------------------------------------------
+  # ---------- 4) get dependencies --------------------------------------------
+  
+  if(include_dependencies){
+    
+    message("Identifying dependencies")
+    
+    deps <- list()
+    
+    for(p in 1:length(packages_to_cite)){
+      
+      deps[p] <- tools::package_dependencies(packages_to_cite[p], 
+                                             recursive = recursive_dependencies
+                                             )
+      
+    }
+    
+    sum(lengths(deps))
+    
+    deps_clean <-
+      deps %>%
+      unlist() %>%
+      unique()
+    
+    deps_clean <- deps_clean[deps_clean %ni% packages_to_cite]
+    
+    dependencies <- deps_clean[order(deps_clean)]
+    
+    message("Found ", length(dependencies), " additional dependencies.")
+    
+  }else{
+    
+    dependencies <- c(NULL)
+    
+  }
+  
+  
+  
+  # ---------- 5) get citation infos ------------------------------------------
   
   citations <- list()
   for(i in 1:length(packages_to_cite)){
@@ -184,6 +224,16 @@ citeR <- function(input,
       citation(packages_to_cite[i]) %>%
       toBibtex() %>%
       sub("\\{,", paste0("{R:", packages_to_cite[i], ","), .)
+  }
+  
+  citations_dependencies <- list()
+  if(include_dependencies){
+    for(i in 1:length(dependencies)){
+      citations[[i]] <- 
+        citation(dependencies[i]) %>%
+        toBibtex() %>%
+        sub("\\{,", paste0("{R:", dependencies[i], ","), .)
+    }
   }
   
   # add R
@@ -210,18 +260,36 @@ citeR <- function(input,
   #  citation_citeR[names(citation_citeR) %ni% c("organization", "address")] %>%
   #  list()
   
-  citations_all <-
-    c(citation_R, citation_citeR, citations)
+  
+  # ---------- 6) get latex packages ------------------------------------------
+  
+  if(include_latex){
+    
+    warning("Including Latex not yet implemented")
+    
+    citations_latex <- list()
+    
+  }else{
+    
+    citations_latex <- list()
+    
+  }
   
   
-  
-  # ---------- 5) put warnings for missing citations --------------------------
+  # ---------- 7) put warnings for missing citations --------------------------
   
   # TBD: needs an example of a package that exists but has no citation info
   
   
+  citations_all <-
+    c(citation_R, citation_citeR, citations, 
+      citations_dependencies,
+      citations_latex)
   
-  # ---------- 6) save all citation info in one bibtex-file -------------------
+  
+  # ---------- 8) save all citation info in one bibtex-file -------------------
+  
+  message("saving bib file to output location")
   
   citation_file <-
     citations_all %>%
